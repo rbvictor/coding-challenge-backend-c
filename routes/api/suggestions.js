@@ -16,12 +16,14 @@ router.get('/', function (req, res, next) {
   var longitude = req.query.longitude || req.query.long;
 
   if (!q && !latitude && !longitude) {
+    res.status(404);
     res.json({suggestions: []});
     return;
   }
 
   get_query(q, latitude, longitude, knex)
     .then(function(rows) {
+      if (rows.length === 0) res.status(404);
       res.json({suggestions: rows});
     })
     .catch(function (err_db) {

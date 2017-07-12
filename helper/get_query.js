@@ -7,6 +7,7 @@ function get_query(q, latitude, longitude, knex) {
 
   if (q) q = q.trim();
 
+
   // -------------------- with statement  --------------------
   var q_columns = [];
 
@@ -70,6 +71,7 @@ function get_query(q, latitude, longitude, knex) {
       .whereRaw("(coordinate <-> q_geom) <= 10.0 / 0.3 - 10.0")
       .orderByRaw("coordinate <-> q_geom ASC");
   }
+
 
   // ----------------------- overall score --------------------------
 

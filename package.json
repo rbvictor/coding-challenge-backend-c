@@ -10,11 +10,32 @@
     "body-parser": "~1.17.1",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.3",
+    "dotenv": "^4.0.0",
     "express": "~4.15.2",
     "hbs": "~4.0.1",
     "knex": "^0.13.0",
     "morgan": "~1.8.1",
     "pg": "^6.4.0",
     "serve-favicon": "~2.4.2"
-  }
+  },
+  "devDependencies": {
+    "chai": "^4.1.0",
+    "chai-http": "^3.0.0",
+    "mocha": "^3.4.2"
+  },
+  "description": "## Requirements",
+  "main": "./bin/www",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rbvictor/coding-challenge-backend-rv.git"
+  },
+  "author": "Rômulo Barroso Victor",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rbvictor/coding-challenge-backend-rv/issues"
+  },
+  "homepage": "https://github.com/rbvictor/coding-challenge-backend-rv#readme"
 }
