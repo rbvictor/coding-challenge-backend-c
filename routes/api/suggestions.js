@@ -1,3 +1,7 @@
+/**
+ * @file Entry route of API request
+ */
+
 var express = require('express');
 var router = express.Router();
 
@@ -9,12 +13,21 @@ var knex = require('knex')({
 
 var get_query = require('../../helper/get_query');
 
-/* GET suggestions */
-router.get('/', function (req, res, next) {
-  var q = req.query.q;
-  var latitude = req.query.latitude || req.query.lat;
-  var longitude = req.query.longitude || req.query.long;
 
+router.get('/', function (req, res, next) {
+  /**
+   * city name query
+   * @type  {string}
+   **/
+  var q = req.query.q;
+
+  /** @type  {float} */
+  var latitude = req.query.latitude || req.query.lat;
+
+  /** @type  {float} */
+  var longitude = req.query.longitude || req.query.lon;
+
+  /* empty query */
   if (!q && !latitude && !longitude) {
     res.status(404);
     res.json({suggestions: []});
