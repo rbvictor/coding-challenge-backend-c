@@ -12,6 +12,7 @@ require('dotenv').config({path: '../.env'});
 var app = require('../app');
 var debug = require('debug')('coding-challenge-backend-rv:server');
 var http = require('http');
+var fs = require('fs');
 
 /**
  * Get port from environment and store in Express.
@@ -30,7 +31,15 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+if (process.env.DYNO) { /*if on heroku*/
+  server.listen('/tmp/nginx.socket', function () {
+    fs.openSync('/tmp/app-initialized', 'w');
+  });
+}
+else {
+  server.listen(port);
+}
+
 server.on('error', onError);
 server.on('listening', onListening);
 
