@@ -33,7 +33,7 @@ var server = http.createServer(app);
 
 if (process.env.DYNO) { /*if on heroku*/
   server.listen('/tmp/nginx.socket', function () {
-    fs.openSync('/tmp/app-initialized', 'w');
+    fs.openSync('/tmp/app-initialization', 'w');
     console.log('nginx initialized');
   });
 }
