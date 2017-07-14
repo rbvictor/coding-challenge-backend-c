@@ -18,7 +18,7 @@ var fs = require('fs');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '5000');
+var port = normalizePort('5000'); //process.env.PORT || '5000');
 app.set('port', port);
 
 /**
@@ -33,7 +33,7 @@ var server = http.createServer(app);
 
 if (process.env.DYNO) { /*if on heroku*/
   server.listen('/tmp/nginx.socket', function () {
-    fs.openSync('/tmp/app-initialization', 'w');
+    fs.openSync('/tmp/app-initialized', 'w');
     console.log('nginx initialized');
   });
 }
