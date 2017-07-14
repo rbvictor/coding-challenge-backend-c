@@ -1,1 +1,1 @@
-web: bin/start-nginx node bin/www.js
+web: bin/start-nginx node bin/www
