@@ -26,9 +26,20 @@ CREATE TABLE cities_raw (
     modified_at date
 );
 
+DROP TABLE IF EXISTS states_provinces;
+
+CREATE TABLE states_provinces (
+    admin1 CHAR(2) PRIMARY KEY,
+    state_code CHAR(2),
+    state_en TEXT,
+    state_fr TEXT
+);
+
 -- import cities into database
 \COPY cities_raw FROM './data/cities_canada-usa.tsv' DELIMITER E'\t' CSV HEADER QUOTE E'\b';
 
+-- import states and provinces into database
+\COPY states_provinces FROM './data/states_provinces.csv' DELIMITER E';' CSV HEADER QUOTE E'\b';
 
 -- import postgres extensions
 CREATE EXTENSION IF NOT EXISTS pg_trgm; -- trigram for comparing strings
@@ -46,7 +57,10 @@ CREATE TABLE cities (
     name TEXT,
     name_ascii TEXT,
     name_metaphone TEXT,
-    state CHAR(2),
+    admin1 CHAR(2),
+    state_code TEXT,
+    state_en TEXT,
+    state_fr TEXT,
     country TEXT,
     latitude NUMERIC,
     longitude NUMERIC,
@@ -59,22 +73,10 @@ SELECT
     name,
     ascii,
     metaphone(name, 16),
-    CASE admin1
-        WHEN '01' THEN 'AB'
-        WHEN '02' THEN 'BC'
-        WHEN '03' THEN 'MB'
-        WHEN '04' THEN 'NB'
-        WHEN '05' THEN 'NL'
-        WHEN '07' THEN 'NS'
-        WHEN '08' THEN 'ON'
-        WHEN '09' THEN 'PE'
-        WHEN '10' THEN 'QC'
-        WHEN '11' THEN 'SK'
-        WHEN '12' THEN 'YT'
-        WHEN '13' THEN 'NT'
-        WHEN '14' THEN 'NU'
-        ELSE admin1
-    END state,
+    c.admin1,
+    s.state_code,
+    s.state_en,
+    s.state_fr,
     case country
         WHEN 'CA' THEN 'Canada'
         WHEN 'US' THEN 'USA'
@@ -83,7 +85,9 @@ SELECT
     latitude,
     longitude,
     ST_SetSRID(ST_MakePoint(latitude, longitude), 4326)
-FROM cities_raw;
+FROM cities_raw c
+INNER JOIN states_provinces s
+ON c.admin1 = s.admin1;
 
 DROP TABLE cities_raw;
 

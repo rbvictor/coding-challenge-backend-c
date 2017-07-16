@@ -9,7 +9,7 @@ require('dotenv').config({path: '../.env'});
  * Module dependencies.
  */
 
-var app = require('../app');
+var app = require('../src/app');
 var debug = require('debug')('coding-challenge-backend-rv:server');
 var http = require('http');
 var fs = require('fs');
