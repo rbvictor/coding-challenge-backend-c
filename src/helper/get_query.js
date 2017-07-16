@@ -218,24 +218,20 @@ function get_name_scores() {
   var mtph_trgm_score = "(1 - least(name_metaphone <<-> q_name_metaphone, name_metaphone <->> q_name_metaphone))";
 
   /**
-   * decimal score from trigram similarity between states and some word in query
+   * decimal score from trigram similarity between states or country and one of the words within the query
    * @type {string}
    */
-  var state_score = "(1 - least(state_code <<-> q_state, state_en <<-> q_state, state_fr <<-> q_state))";
-
-  /**
-   * decimal score from trigram similarity between states and some word in query
-   * @type {string}
-   */
-  var country_score = "(1 - (country <<-> q_country))";
+  var state_country_score = "least(1.0," +
+    "1 - least(state_code <<-> q_state, state_en <<-> q_state, state_fr <<-> q_state) + " +
+    "1 - (country <<-> q_country))";
 
   return [
     //{ w: 0.25, expr: substring_score },
-    { w: 0.334, expr: trgm_score },
-    { w: 0.333, expr: word_trgm_score },
-    { w: 0.333, expr: mtph_trgm_score },
-    { w: 0.500, expr: state_score },
-    { w: 0.500, expr: country_score }];
+      { w: 0.334, expr: trgm_score },
+      { w: 0.333, expr: word_trgm_score },
+      { w: 0.333, expr: mtph_trgm_score },
+      { w: 0.500, expr: state_country_score }
+    ];
 }
 
 
