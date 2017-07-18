@@ -37,6 +37,7 @@ router.get('/', function (req, res, next) {
   get_query(q, latitude, longitude, knex)
     .then(function(rows) {
       if (rows.length === 0) res.status(404);
+      res.set('Access-Control-Allow-Origin', '*');
       res.json({suggestions: rows});
     })
     .catch(function (err_db) {

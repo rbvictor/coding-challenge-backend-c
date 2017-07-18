@@ -9,8 +9,8 @@ CREATE TABLE cities_raw (
     name TEXT,
     ascii TEXT,
     alt_name TEXT,
-    latitude NUMERIC,
-    longitude NUMERIC,
+    latitude REAL,
+    longitude REAL,
     feat_class CHAR(1),
     feat_code CHAR(5),
     country CHAR(2),
@@ -62,8 +62,8 @@ CREATE TABLE cities (
     state_en TEXT,
     state_fr TEXT,
     country TEXT,
-    latitude NUMERIC,
-    longitude NUMERIC,
+    latitude REAL,
+    longitude REAL,
     coordinate GEOMETRY(POINT, 4326)
 );
 

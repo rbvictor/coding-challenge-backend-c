@@ -65,7 +65,7 @@ function get_overall_score(q, latitude, longitude, knex) {
   else // if (latitude || longitude)
     score = "geo_score";
 
-  score = knex.raw("least(1.0, round(" + score + "::numeric, 5)) as score");
+  score = knex.raw("least(1.0, " + score + "::real) as score");
   return score;
 }
 
@@ -106,15 +106,15 @@ function get_q_columns(q, latitude, longitude, knex) {
     var q_geom = "";
     var q_geom_params = [];
     if (latitude && longitude) { // if both, q_geom is a point
-      q_geom = "ST_MakePoint(?::numeric, ?::numeric)";
+      q_geom = "ST_MakePoint(?::real, ?::real)";
       q_geom_params = [latitude, longitude];
     }
     else if (latitude) { // if only latitude, q_geom is a horizontal line
-      q_geom = "ST_MakeLine(ST_MakePoint(?::numeric, -180), ST_MakePoint(?::numeric, 180))";
+      q_geom = "ST_MakeLine(ST_MakePoint(?::real, -180), ST_MakePoint(?::real, 180))";
       q_geom_params = [latitude, latitude];
     }
     else if (longitude) { // if only longitude, q_geom is a vertical line
-      q_geom = "ST_MakeLine(ST_MakePoint(-90, ?::numeric), ST_MakePoint(90, ?::numeric))";
+      q_geom = "ST_MakeLine(ST_MakePoint(-90, ?::real), ST_MakePoint(90, ?::real))";
       q_geom_params = [longitude, longitude];
     }
 
