@@ -1,7 +1,6 @@
 import 'whatwg-fetch';
 
 export const UPDATE_QUERY = 'UPDATE_QUERY';
-export const REQUEST_SUGGESTIONS = 'REQUEST_SUGGESTIONS';
 export const RECEIVE_SUGGESTIONS = 'RECEIVE_SUGGESTIONS';
 
 const updateQuery = (query) => (
@@ -16,13 +15,26 @@ const receiveSuggestions = (json) => (
     suggestions: json.suggestions
   });
 
-const homeUrl = 'api/suggestions?q=';
+const homeUrl = 'api/suggestions?';
 
 export const fetchSuggestions = (query) => {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     dispatch(updateQuery(query));
 
-    return fetch(homeUrl + query, {
+    let newState = getState();
+
+    let params = [];
+
+    if (newState.queryDetails.q)
+      params.push('q=' + newState.queryDetails.q);
+
+    if (newState.queryDetails.latitude)
+      params.push('latitude=' + newState.queryDetails.latitude);
+
+    if (newState.queryDetails.longitude)
+      params.push('longitude=' + newState.queryDetails.longitude);
+
+    return fetch(homeUrl + params.join('&'), {
       method: 'GET',
       mode: 'cors',
       header: new Headers({

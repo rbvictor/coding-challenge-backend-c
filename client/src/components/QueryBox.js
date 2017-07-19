@@ -18,8 +18,9 @@ class QueryBox extends Component {
   render() {
     return (
       <div className="input-group input-group-margin-bottom">
-        <input type="text" className="form-control" placeholder="URL..." aria-describedby="basic-addon1"
-               value={this.props.value} onChange={this.props.onChange} onKeyPress={this.handleKeyPress} />
+        <input type="text" className="form-control" placeholder="Enter city name and its coordinates..."
+               aria-describedby="basic-addon1" value={this.props.value} onChange={this.props.onChange}
+               onKeyPress={this.handleKeyPress} />
         <span className="input-group-btn">
           <button className="btn btn-secondary" type="button" onClick={this.props.onClick} >
             &raquo;
