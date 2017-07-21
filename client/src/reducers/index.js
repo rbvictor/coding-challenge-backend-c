@@ -1,10 +1,12 @@
-import { combineReducers } from 'redux';
-import { UPDATE_QUERY, RECEIVE_SUGGESTIONS } from '../actions'
+import {combineReducers} from 'redux';
+import {UPDATE_QUERY, RECEIVE_SUGGESTIONS, TOGGLE_WAITING} from '../actions'
 
 const query = (state = '', action) => {
   switch (action.type) {
-    case UPDATE_QUERY: return action.query;
-    default: return state;
+    case UPDATE_QUERY:
+      return action.query;
+    default:
+      return state;
   }
 };
 
@@ -18,24 +20,38 @@ const extractDetails = (query) => {
   };
 };
 
-const queryDetails = (state = { q: '', latitude: NaN, longitude: NaN }, action) => {
+const queryDetails = (state = {q: '', latitude: NaN, longitude: NaN}, action) => {
   switch (action.type) {
-    case UPDATE_QUERY: return extractDetails(action.query);
-    default: return state;
+    case UPDATE_QUERY:
+      return extractDetails(action.query);
+    default:
+      return state;
   }
 };
 
-const suggestions  = (state = [], action) => {
-  switch(action.type) {
-    case RECEIVE_SUGGESTIONS: return action.suggestions;
-    default: return state;
+const suggestions = (state = [], action) => {
+  switch (action.type) {
+    case RECEIVE_SUGGESTIONS:
+      return action.suggestions;
+    default:
+      return state;
+  }
+};
+
+const isWaiting = (state = false, action)=> {
+  switch (action.type) {
+    case TOGGLE_WAITING:
+      return action.isWaiting;
+    default:
+      return state;
   }
 };
 
 const globalReducer = combineReducers({
   query,
   queryDetails,
-  suggestions
+  suggestions,
+  isWaiting
 });
 
 export default globalReducer;

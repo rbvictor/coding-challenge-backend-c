@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import { fetchSuggestions } from '../actions';
 import QueryBox from "./QueryBox";
 import Suggestions from "./Suggestions";
+import PlotlyMap from "./PlotlyMap";
 
 class App extends Component {
 
@@ -11,14 +12,6 @@ class App extends Component {
     super(props, context);
     this.handleClick = this.handleClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
-  }
-
-  componentDidMount() {
-    // ***
-  }
-
-  componentDidUpdate() {
-
   }
 
   handleClick(e) {
@@ -36,15 +29,17 @@ class App extends Component {
       <div>
         <QueryBox value={this.props.query} onChange={this.handleChange} onClick={this.handleClick} />
         <Suggestions suggestions={this.props.suggestions} />
+        <PlotlyMap suggestions={this.props.suggestions} isWaiting={this.props.isWaiting}/>
       </div>
     );
   }
 }
 
 App.propTypes = {
-  query: PropTypes.string,
-  suggestions: PropTypes.array,
-  dispatch: PropTypes.func
+  query: PropTypes.string.isRequired,
+  suggestions: PropTypes.array.isRequired,
+  dispatch: PropTypes.func.isRequired,
+  isWaiting: PropTypes.bool.isRequired
 };
 
 const mapStateToProps = (state) => (state);

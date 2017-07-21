@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 class Suggestion extends Component {
   render() {
     return (
-      <div className="col-xs-12 col-lg-12">
-        <h2>{this.props.name}</h2>
+      <div className="panel panel-default panel-body">
+        <h3>{this.props.name}</h3>
         <p>Latitude: {this.props.latitude}</p>
         <p>Longitude: {this.props.longitude}</p>
         <p>Score: {this.props.score}</p>

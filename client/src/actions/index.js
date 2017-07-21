@@ -2,6 +2,7 @@ import 'whatwg-fetch';
 
 export const UPDATE_QUERY = 'UPDATE_QUERY';
 export const RECEIVE_SUGGESTIONS = 'RECEIVE_SUGGESTIONS';
+export const TOGGLE_WAITING = 'TOGGLE_WAITING';
 
 const updateQuery = (query) => (
   {
@@ -15,14 +16,28 @@ const receiveSuggestions = (json) => (
     suggestions: json.suggestions
   });
 
+const toggleWaiting = (isWaiting) => (
+  {
+    type: TOGGLE_WAITING,
+    isWaiting
+  }
+);
+
+const shouldKeepWaiting = (json) => {
+  return (dispatch, getState) => {
+    dispatch(toggleWaiting(getState().suggestions !== json.suggestions));
+  }
+};
+
 const homeUrl = 'api/suggestions?';
 
 export const fetchSuggestions = (query) => {
   return (dispatch, getState) => {
+
     dispatch(updateQuery(query));
+    dispatch(toggleWaiting(true));
 
     let newState = getState();
-
     let params = [];
 
     if (newState.queryDetails.q)
@@ -41,10 +56,10 @@ export const fetchSuggestions = (query) => {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'multipart/form-data'
       })
-    }).then((response) => { return response.json();
+    }).then((response) => { return (getState().query.trim()) ? response.json() : { suggestions: [] };
     }).then((json) => {
-      console.log(json);
-      dispatch(receiveSuggestions(json))
+      dispatch(receiveSuggestions(json));
+      setTimeout(() => { dispatch(shouldKeepWaiting(json)); }, 500);
     });
   };
 };

@@ -37,7 +37,7 @@ function get_query(q, latitude, longitude, knex) {
     })
     .select(["name", "latitude", "longitude", "score"])
     .from(knex.raw("iq, (select avg(score) av, stddev_pop(score) sd, max(score) mx from iq) stats"))
-    .whereRaw("score >= least(av + 2 * sd, mx)");
+    .whereRaw("score >= least(av + 3 * sd, mx)");
 
   if (q)
     query = query.orderBy("score", "DESC");
@@ -194,7 +194,7 @@ function get_name_scores() {
    * score 1 or 0, if city name contains a substring matching the query exactly
    * @type {string}
    */
-  //var substring_score = "(name_ascii ILIKE q_name_ilike)::int";
+  var substring_score = "(name_ascii ILIKE q_name_ilike)::int";
 
   /**
    * decimal score from trigram similarity between strings
@@ -226,11 +226,11 @@ function get_name_scores() {
     "1 - (country <<-> q_country))";
 
   return [
-    //{ w: 0.25, expr: substring_score },
-      { w: 0.334, expr: trgm_score },
-      { w: 0.333, expr: word_trgm_score },
-      { w: 0.333, expr: mtph_trgm_score },
-      { w: 0.500, expr: state_country_score }
+      { w: 0.25, expr: substring_score },
+      { w: 0.25, expr: trgm_score },
+      { w: 0.25, expr: word_trgm_score },
+      { w: 0.25, expr: mtph_trgm_score },
+      { w: 0.25, expr: state_country_score }
     ];
 }
 
@@ -250,7 +250,7 @@ function get_inner_query_conditions() {
    */
 
   return [
-    // "name_ascii ILIKE q_name_ilike",
+    //"name_ascii ILIKE q_name_ilike",
     "name_ascii % q_name",
     "name_ascii <<-> q_name <= 0.7",
     "name_ascii <->> q_name <= 0.7",

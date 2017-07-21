@@ -1,0 +1,37 @@
+{
+  "title": "",
+  "width": 700,
+  "height": 700,
+  "font": {
+    "family": "Droid Serif, serif",
+    "size": 14
+  },
+  "titlefont": {
+    "size": 16
+  },
+  "geo": {
+    "scope": "north america",
+    "resolution": 50,
+    "lonaxis": {
+      "range": [
+        -140,
+        -55
+      ]
+    },
+    "lataxis": {
+      "range": [
+        25,
+        80
+      ]
+    },
+    "showrivers": true,
+    "rivercolor": "#fff",
+    "showlakes": true,
+    "lakecolor": "#fff",
+    "showland": true,
+    "landcolor": "#EAEAAE",
+    "countrycolor": "#d3d3d3",
+    "countrywidth": 1.5,
+    "subunitcolor": "#d3d3d3"
+  }
+}
