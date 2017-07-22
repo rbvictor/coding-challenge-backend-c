@@ -11,13 +11,21 @@ const suggestionsToMapData = (suggestions) => (
   [{
     type: 'scattergeo',
     mode: 'markers+text',
-    text: suggestions.map(s => s.name.split(",")[0]),
+    text: suggestions.map(s => s.name),
     lat: suggestions.map(s => s.latitude),
     lon: suggestions.map(s => s.longitude),
     marker: {
-      size: 10,
-      color: suggestions.map((s, i) => !i ? "#CC0000" : "#0000FF"),
-      line: {width: 1}
+      size: 12,
+      color: suggestions.map(s => s.score),
+      colorscale: [[0.000, '#FFFF00'], [0.125, '#FFFF00'], [0.250, '#FFFF00'], [0.375, '#FFFF00'],
+                    [0.500, '#FFBF00'], [0.625, '#FFBF00'], [0.750, '#FF7F00'], [0.875, '#FF3800'], [1.000, '#FF0000']],
+      cmax : 1,
+      cmin: 0,
+      line: { width: 0.5 },
+      colorbar: {
+        thickness: 15,
+        titleside: 'right'
+      }
     },
     textposition: 'top-right'
   }]

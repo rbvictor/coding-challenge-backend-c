@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "lodash": "^4.17.4",
+    "plotly.js": "^1.29.0",
     "prop-types": "^15.5.10",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",

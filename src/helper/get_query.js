@@ -35,9 +35,9 @@ function get_query(q, latitude, longitude, knex) {
     .with('iq', function(qb) {
       return qb.select(columns).from(get_inner_query(q, latitude, longitude, knex).as("t"));
     })
-    .select(["name", "latitude", "longitude", "score"])
+    .select(["name", "latitude", "longitude", knex.raw("(score / greatest(1.0, mx)) as score")])
     .from(knex.raw("iq, (select avg(score) av, stddev_pop(score) sd, max(score) mx from iq) stats"))
-    .whereRaw("score >= least(av + 3 * sd, mx)");
+    .whereRaw("score >= least(av + 3 * sd, mx, 1.0)");
 
   if (q)
     query = query.orderBy("score", "DESC");
@@ -65,7 +65,7 @@ function get_overall_score(q, latitude, longitude, knex) {
   else // if (latitude || longitude)
     score = "geo_score";
 
-  score = knex.raw("least(1.0, " + score + "::real) as score");
+  score = knex.raw(score + "::real as score");
   return score;
 }
 
@@ -218,19 +218,24 @@ function get_name_scores() {
   var mtph_trgm_score = "(1 - least(name_metaphone <<-> q_name_metaphone, name_metaphone <->> q_name_metaphone))";
 
   /**
-   * decimal score from trigram similarity between states or country and one of the words within the query
+   * decimal score from trigram similarity between the state / province and one of the words within the query
    * @type {string}
    */
-  var state_country_score = "least(1.0," +
-    "1 - least(state_code <<-> q_state, state_en <<-> q_state, state_fr <<-> q_state) + " +
-    "1 - (country <<-> q_country))";
+  var state_score = "(1 - least(state_code <<-> q_state, state_en <<-> q_state, state_fr <<-> q_state))";
+
+  /**
+   * decimal score from trigram similarity between the country and one of the words within the query
+   * @type {string}
+   */
+  var country_score = "(1 - (country <<-> q_country))";
 
   return [
-      { w: 0.25, expr: substring_score },
-      { w: 0.25, expr: trgm_score },
-      { w: 0.25, expr: word_trgm_score },
-      { w: 0.25, expr: mtph_trgm_score },
-      { w: 0.25, expr: state_country_score }
+      { w: 0.250, expr: substring_score },
+      { w: 0.250, expr: trgm_score },
+      { w: 0.250, expr: word_trgm_score },
+      { w: 0.250, expr: mtph_trgm_score },
+      { w: 0.125, expr: state_score },
+      { w: 0.125, expr: country_score },
     ];
 }
 
