@@ -14,6 +14,9 @@ var knex = require('knex')({
 var get_query = require('../../helper/get_query');
 
 
+/**
+ *
+ */
 router.get('/', function (req, res, next) {
   /**
    * city name query
@@ -27,6 +30,10 @@ router.get('/', function (req, res, next) {
   /** @type  {float} */
   var longitude = req.query.longitude || req.query.lon;
 
+  /** @type  {float} */
+  var threshold = req.query.threshold || req.query.thr;
+
+
   /* empty query */
   if (!q && !latitude && !longitude) {
     res.status(404);
@@ -34,7 +41,7 @@ router.get('/', function (req, res, next) {
     return;
   }
 
-  get_query(q, latitude, longitude, knex)
+  get_query(q, latitude, longitude, knex, threshold)
     .then(function(rows) {
       if (rows.length === 0) res.status(404);
       res.set('Access-Control-Allow-Origin', '*');

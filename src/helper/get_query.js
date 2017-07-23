@@ -12,9 +12,10 @@ module.exports = get_query;
  * @param {float} latitude
  * @param {float} longitude
  * @param {object} knex - library used to build queries and return results if a connection is given
+ * @param {float} threshold - minimal score returned
  * @return {object} query
  */
-function get_query(q, latitude, longitude, knex) {
+function get_query(q, latitude, longitude, knex, threshold) {
 
   /**
    *  if knex object is null, a 'connectionless' object is created just for query building
@@ -26,6 +27,8 @@ function get_query(q, latitude, longitude, knex) {
 
   if (q) q = q.trim();
 
+  var { score_threshold, inner_query } = get_inner_query(q, latitude, longitude, knex);
+
   var columns = ["name", "latitude", "longitude", get_overall_score(q, latitude, longitude, knex)];
 
   var query = knex
@@ -33,11 +36,12 @@ function get_query(q, latitude, longitude, knex) {
       return qb.select(get_q_columns(q, latitude, longitude, knex));
     })
     .with('iq', function(qb) {
-      return qb.select(columns).from(get_inner_query(q, latitude, longitude, knex).as("t"));
+      return qb.select(columns).from(inner_query.as("t"));
     })
-    .select(["name", "latitude", "longitude", knex.raw("(score / greatest(1.0, mx)) as score")])
+    .select(["name", "latitude", "longitude", knex.raw("(score / greatest(1, mx)) as score")])
     .from(knex.raw("iq, (select avg(score) av, stddev_pop(score) sd, max(score) mx from iq) stats"))
-    .whereRaw("score >= least(av + 3 * sd, mx, 1.0)");
+    .whereRaw("score >= " +
+      (threshold || "greatest(least(av + 2 * sd, mx, 1), " + score_threshold + " * greatest(1, mx))"));
 
   if (q)
     query = query.orderBy("score", "DESC");
@@ -137,19 +141,37 @@ function get_q_columns(q, latitude, longitude, knex) {
  * @param latitude
  * @param longitude
  * @param knex
- * @return {object} inner_query
+ * @return {object} { score_threshold, inner_query }
  */
 function get_inner_query(q, latitude, longitude, knex) {
   var inner_columns = [
     knex.raw("(name || ', ' || state_code || ', ' || country) as name"), "latitude", "longitude"];
 
+  var score_threshold = 0.0;
+
   if (q) {
+
+    var name_subscores = get_name_subscores();
+
     /**
-     * name score is a linear combination of the previous scores
+     * name_score is a polynomial combination of the subscores
      * @type {string}
      */
-    var name_score = get_name_scores().map(function(ns){ return ns.w + '*' + ns.expr; }).join(' + ');
-    inner_columns.push(knex.raw("(" + name_score + ") AS name_score" ));
+    var name_score = name_subscores.map(function(s){ return 'pow(' + s.w + '*' + s.expr + ', 2)'; }).join(' + ');
+
+    /**
+     * name_score_denominator is a polynomial combination of the scores when they are maximized.
+     * As the maximum of each score is 1, it comes back to get the number of subscores that are not bonus
+     * @type {number}
+     */
+
+    var name_score_denominator = name_subscores
+      .map(function(s) { return s.is_bonus ? 0 : s.w * s.w; })
+      .reduce(function(w1, w2) { return w1 + w2; }, 0);
+
+    score_threshold = 1.0 / name_score_denominator;
+
+    inner_columns.push(knex.raw("(" + name_score + ") / " + name_score_denominator + " AS name_score" ));
   }
 
   if (latitude || longitude) {
@@ -179,17 +201,18 @@ function get_inner_query(q, latitude, longitude, knex) {
     if (!q) inner_query = inner_query.orderByRaw("coordinate <-> q_geom ASC");
   }
 
-  return inner_query;
+  return { score_threshold, inner_query };
 }
 
 
 /**
- * @description this method returns an array of score expressions with their respective weights
+ * @description this method returns an array of subscore expressions with their respective weights
+ * when a subscore is not a bonus, it means they don't count in the denominator of the overall name score
  *
- * @returns {[*,*,*,*,*,*]} array of objects like { w: float, expr: string }
+ * @returns {[*,*,*,*,*,*]} array of objects like { is_bonus : bool, expr: string }
  */
 
-function get_name_scores() {
+function get_name_subscores() {
   /**
    * score 1 or 0, if city name contains a substring matching the query exactly
    * @type {string}
@@ -230,12 +253,12 @@ function get_name_scores() {
   var country_score = "(1 - (country <<-> q_country))";
 
   return [
-      { w: 0.250, expr: substring_score },
-      { w: 0.250, expr: trgm_score },
-      { w: 0.250, expr: word_trgm_score },
-      { w: 0.250, expr: mtph_trgm_score },
-      { w: 0.125, expr: state_score },
-      { w: 0.125, expr: country_score },
+      { w:1.0, is_bonus: false,  expr: substring_score },
+      { w:2.0, is_bonus: false,  expr: trgm_score },
+      { w:1.0, is_bonus: false,  expr: word_trgm_score },
+      { w:1.0, is_bonus: false,  expr: mtph_trgm_score },
+      { w:0.5, is_bonus: true,  expr: state_score },
+      { w:0.5, is_bonus: true,  expr: country_score },
     ];
 }
 
@@ -250,8 +273,8 @@ function get_inner_query_conditions() {
   /**
    * pg_trgm operators:
    *    a  % b: returns true if similarity between 'a' and 'b' is above 0.3 (default)
-   *    a <% b: returns true if similarity between 'a' and some word within 'b' is above 0.6 (default)
-   *    a %> b: returns true if similarity between 'b' and some word within 'a' is above 0.6 (default)
+   *    a <<-> b : distance between 'a' and some word within 'b'
+   *    a <->> b : distance between 'b' and some word within 'a'
    */
 
   return [

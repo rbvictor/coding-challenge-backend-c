@@ -57,9 +57,10 @@ class PlotlyMap extends Component {
 
   componentDidUpdate() {
     if (!this.props.isWaiting) {
-      _.defer((id, suggestions, layout) => {
-          Plotly.newPlot(id, suggestionsToMapData(suggestions), layout);
-        }, this.id, this.props.suggestions, layout);
+      _.defer((_this, layout) => {
+        if (!_this.props.isWaiting)
+          Plotly.newPlot(_this.id, suggestionsToMapData(_this.props.suggestions), layout);
+        }, this, layout);
     }
   }
 

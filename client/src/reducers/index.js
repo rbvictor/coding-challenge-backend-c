@@ -10,7 +10,7 @@ const query = (state = '', action) => {
   }
 };
 
-const extractDetails = (query) => {
+const _extractDetails = (query) => {
   const regex = /^((?:(?!(-?\d)).)*)(-?\d+(?:\.\d*)?)?(?:(?!(-?\d)).)*(-?\d+(?:\.\d*)?)?.*$/g;
   let match = regex.exec(query);
   return {
@@ -23,7 +23,7 @@ const extractDetails = (query) => {
 const queryDetails = (state = {q: '', latitude: NaN, longitude: NaN}, action) => {
   switch (action.type) {
     case UPDATE_QUERY:
-      return extractDetails(action.query);
+      return _extractDetails(action.query);
     default:
       return state;
   }
