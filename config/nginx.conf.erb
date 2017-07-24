@@ -127,7 +127,7 @@ http {
 
         location /docs/ {
             root /app;
-            try_files $uri $uri/ /index.html ;
+            try_files $uri/ $uri /index.html ;
         }
 
         location /sw.js {
