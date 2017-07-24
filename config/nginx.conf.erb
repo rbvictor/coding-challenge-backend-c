@@ -127,6 +127,7 @@ http {
             proxy_cache_revalidate on;
             expires off;
             access_log off;
+            try_files $uri $uri/ /index.html;
         }
 
         location /docs {
@@ -136,6 +137,7 @@ http {
             proxy_cache_revalidate on;
             expires off;
             access_log off;
+            try_files $uri $uri/ /index.html;
         }
 
         location /sw.js {
