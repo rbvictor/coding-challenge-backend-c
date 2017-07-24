@@ -121,7 +121,13 @@ http {
 		server_name  _;
 
         location / {
-            alias /app/client/build;
+            root /app/client/build;
+            try_files $uri /index.html
+        }
+
+        location /docs {
+            root /app/
+            try_files $uri /index.html
         }
 
         location /sw.js {
