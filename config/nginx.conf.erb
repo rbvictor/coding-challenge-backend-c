@@ -132,6 +132,7 @@ http {
         }
 
         location = /docs {
+            root /app;
             try_files $uri/index.html;
         }
 
