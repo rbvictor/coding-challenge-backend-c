@@ -121,23 +121,7 @@ http {
 		server_name  _;
 
         location / {
-            alias	"/app/client/build";
-            add_header Cache-Control "no-cache";
-            proxy_cache_bypass $http_pragma;
-            proxy_cache_revalidate on;
-            expires off;
-            access_log off;
-            try_files $uri $uri/ /index.html;
-        }
-
-        location /docs {
-            alias	"/app/docs";
-            add_header Cache-Control "no-cache";
-            proxy_cache_bypass $http_pragma;
-            proxy_cache_revalidate on;
-            expires off;
-            access_log off;
-            try_files $uri $uri/ /index.html;
+            alias /app/client/build;
         }
 
         location /sw.js {
