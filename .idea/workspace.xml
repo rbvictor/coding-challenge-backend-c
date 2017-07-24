@@ -103,8 +103,8 @@
       <file leaf-file-name="nginx.conf.erb" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/config/nginx.conf.erb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="282">
-              <caret line="124" column="35" lean-forward="true" selection-start-line="124" selection-start-column="35" selection-end-line="124" selection-end-column="35" />
+            <state relative-caret-position="498">
+              <caret line="136" column="38" lean-forward="false" selection-start-line="136" selection-start-column="38" selection-end-line="136" selection-end-column="38" />
               <folding />
             </state>
           </provider>
@@ -549,7 +549,7 @@
       <workItem from="1500510037158" duration="15314000" />
       <workItem from="1500593950874" duration="11161000" />
       <workItem from="1500685395887" duration="9288000" />
-      <workItem from="1500818982760" duration="43309000" />
+      <workItem from="1500818982760" duration="43509000" />
     </task>
     <servers />
   </component>
@@ -586,7 +586,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="208231000" />
+    <option name="totallyTimeSpent" value="208431000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1024,8 +1024,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/config/nginx.conf.erb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="282">
-          <caret line="124" column="35" lean-forward="true" selection-start-line="124" selection-start-column="35" selection-end-line="124" selection-end-column="35" />
+        <state relative-caret-position="498">
+          <caret line="136" column="38" lean-forward="false" selection-start-line="136" selection-start-column="38" selection-end-line="136" selection-end-column="38" />
           <folding />
         </state>
       </provider>
