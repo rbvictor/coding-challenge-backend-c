@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="51ce5528-05b1-49bf-b204-a2a0ac600276" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/nginx.conf.erb" afterPath="$PROJECT_DIR$/config/nginx.conf.erb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/public/index.html" afterPath="$PROJECT_DIR$/client/public/index.html" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -38,16 +38,6 @@
                 <element signature="n#!!doc" expanded="true" />
                 <element signature="e#126#164#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="QueryBox.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/src/components/QueryBox.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="162">
-              <caret line="11" column="57" lean-forward="false" selection-start-line="11" selection-start-column="57" selection-end-line="11" selection-end-column="57" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -110,11 +100,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="nginx.conf.erb" pinned="false" current-in-tab="true">
+      <file leaf-file-name="nginx.conf.erb" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config/nginx.conf.erb">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="242">
               <caret line="128" column="22" lean-forward="true" selection-start-line="128" selection-start-column="22" selection-end-line="128" selection-end-column="22" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/client/public/index.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="259">
+              <caret line="53" column="27" lean-forward="true" selection-start-line="53" selection-start-column="27" selection-end-line="53" selection-end-column="27" />
               <folding />
             </state>
           </provider>
@@ -220,7 +220,6 @@
         <option value="$PROJECT_DIR$/docs/conf.json" />
         <option value="$PROJECT_DIR$/init.sh" />
         <option value="$PROJECT_DIR$/data/create_table.sql" />
-        <option value="$PROJECT_DIR$/client/public/index.html" />
         <option value="$PROJECT_DIR$/package.json" />
         <option value="$PROJECT_DIR$/client/src/index.js" />
         <option value="$PROJECT_DIR$/client/src/components/App.js" />
@@ -233,6 +232,7 @@
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/client/src/actions/index.js" />
         <option value="$PROJECT_DIR$/config/nginx.conf.erb" />
+        <option value="$PROJECT_DIR$/client/public/index.html" />
       </list>
     </option>
   </component>
@@ -330,12 +330,18 @@
             <path>
               <item name="coding-challenge-backend-rv" type="b2602c69:ProjectViewProjectNode" />
               <item name="coding-challenge-backend-rv" type="462c0819:PsiDirectoryNode" />
-              <item name="config" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="coding-challenge-backend-rv" type="b2602c69:ProjectViewProjectNode" />
               <item name="coding-challenge-backend-rv" type="462c0819:PsiDirectoryNode" />
-              <item name="docs" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="coding-challenge-backend-rv" type="b2602c69:ProjectViewProjectNode" />
+              <item name="coding-challenge-backend-rv" type="462c0819:PsiDirectoryNode" />
+              <item name="config" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="coding-challenge-backend-rv" type="b2602c69:ProjectViewProjectNode" />
@@ -543,7 +549,7 @@
       <workItem from="1500510037158" duration="15314000" />
       <workItem from="1500593950874" duration="11161000" />
       <workItem from="1500685395887" duration="9288000" />
-      <workItem from="1500818982760" duration="41732000" />
+      <workItem from="1500818982760" duration="41919000" />
     </task>
     <servers />
   </component>
@@ -580,7 +586,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="206654000" />
+    <option name="totallyTimeSpent" value="206841000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -880,14 +886,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/public/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="43" column="42" lean-forward="false" selection-start-line="43" selection-start-column="42" selection-end-line="43" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/package.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="288">
@@ -1020,6 +1018,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="242">
           <caret line="128" column="22" lean-forward="true" selection-start-line="128" selection-start-column="22" selection-end-line="128" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/public/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="259">
+          <caret line="53" column="27" lean-forward="true" selection-start-line="53" selection-start-column="27" selection-end-line="53" selection-end-column="27" />
           <folding />
         </state>
       </provider>
