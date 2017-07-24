@@ -92,8 +92,10 @@ ON c.admin1 = s.admin1;
 DROP TABLE cities_raw;
 
 -- create indexes for nearest-neighbor search
-CREATE INDEX cities_name_ascii_coordinate_idx ON cities USING GIST(name_ascii gist_trgm_ops, coordinate);
-CREATE INDEX cities_name_metaphone_coordinate_idx ON cities USING GIST(name_metaphone gist_trgm_ops, coordinate);
+CREATE INDEX cities_name_ascii_coordinate_gin_idx ON cities USING GIN(name_ascii gin_trgm_ops);
+CREATE INDEX cities_name_ascii_coordinate_gist_idx ON cities USING GIST(name_ascii gist_trgm_ops, coordinate);
+CREATE INDEX cities_name_metaphone_coordinate_gin_idx ON cities USING GIN(name_metaphone gin_trgm_ops);
+CREATE INDEX cities_name_metaphone_coordinate_gist_idx ON cities USING GIST(name_metaphone gist_trgm_ops, coordinate);
 CREATE INDEX cities_coordinate_idx ON cities USING GIST(coordinate);
 
 -- End transaction

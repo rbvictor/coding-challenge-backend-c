@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: src/helper/get_query.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: src/helper/get_query.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @file Helper containing function `get_query(q, latitude, longitude, knex)`
  */
 
@@ -76,7 +104,7 @@ function get_query(q, latitude, longitude, knex, threshold) {
 
 function get_overall_score(q, latitude, longitude, knex) {
   var score = "";
-  if (q && (latitude || longitude))
+  if (q &amp;&amp; (latitude || longitude))
     score = "sqrt(name_score * geo_score)";
   else if (q)
     score = "name_score";
@@ -141,7 +169,7 @@ function get_q_columns(q, latitude, longitude, knex) {
     var q_geom = "";
     var q_geom_params = [];
 
-    if (latitude && longitude) {
+    if (latitude &amp;&amp; longitude) {
       q_geom = "ST_MakePoint(?::real, ?::real)";  // point
       q_geom_params = [latitude, longitude];
     }
@@ -212,7 +240,7 @@ function get_inner_query(q, latitude, longitude, knex) {
      * geo score is based on a formula that is 1 when distance is 0 and decreases as distance increases
      * @type {string}
      * */
-    var geo_score = "10 / (10 + (coordinate <-> q_geom))";
+    var geo_score = "10 / (10 + (coordinate &lt;-> q_geom))";
     inner_columns.push(knex.raw("(" + geo_score + ") AS geo_score"));
   }
 
@@ -226,11 +254,11 @@ function get_inner_query(q, latitude, longitude, knex) {
   if (latitude || longitude) {
     /**
      * geo score above 0.3 means :
-     *    10 / (10 + (coordinate <-> q_geom)) >= 0.3 ===>>> (coordinate <-> q_geom) <= 10.0 / 0.3 - 10.0
+     *    10 / (10 + (coordinate &lt;-> q_geom)) >= 0.3 ===>>> (coordinate &lt;-> q_geom) &lt;= 10.0 / 0.3 - 10.0
      */
 
-    inner_query = inner_query.whereRaw("(coordinate <-> q_geom) <= 10.0 / 0.3 - 10.0");
-    if (!q) inner_query = inner_query.orderByRaw("coordinate <-> q_geom ASC");
+    inner_query = inner_query.whereRaw("(coordinate &lt;-> q_geom) &lt;= 10.0 / 0.3 - 10.0");
+    if (!q) inner_query = inner_query.orderByRaw("coordinate &lt;-> q_geom ASC");
   }
 
   return { min_score_threshold, inner_query };
@@ -253,36 +281,36 @@ function get_name_subscores() {
 
   /**
    * decimal score from trigram similarity between strings
-   *    a <-> b : distance between 'a' and 'b'
+   *    a &lt;-> b : distance between 'a' and 'b'
    * @type {string}
    */
-  var trgm_score = "(1 - (name_ascii <-> q_name))";
+  var trgm_score = "(1 - (name_ascii &lt;-> q_name))";
 
   /**
    * decimal score from trigram similarity between strings
-   *    a <<-> b : distance between 'a' and some word within 'b';
-   *    a <->> b : distance between 'b' and some word within 'a'
+   *    a &lt;&lt;-> b : distance between 'a' and some word within 'b';
+   *    a &lt;->> b : distance between 'b' and some word within 'a'
    * @type {string}
    */
-  var word_trgm_score = "(1 - least(name_ascii <<-> q_name, name_ascii <->> q_name))";
+  var word_trgm_score = "(1 - least(name_ascii &lt;&lt;-> q_name, name_ascii &lt;->> q_name))";
 
   /**
    * decimal score from trigram similarity between phonetically converted strings
    * @type {string}
    */
-  var mtph_trgm_score = "(1 - least(name_metaphone <<-> q_name_metaphone, name_metaphone <->> q_name_metaphone))";
+  var mtph_trgm_score = "(1 - least(name_metaphone &lt;&lt;-> q_name_metaphone, name_metaphone &lt;->> q_name_metaphone))";
 
   /**
    * decimal score from trigram similarity between the state / province and one of the words within the query
    * @type {string}
    */
-  var state_score = "(1 - least(state_code <<-> q_state, state_en <<-> q_state, state_fr <<-> q_state))";
+  var state_score = "(1 - least(state_code &lt;&lt;-> q_state, state_en &lt;&lt;-> q_state, state_fr &lt;&lt;-> q_state))";
 
   /**
    * decimal score from trigram similarity between the country and one of the words within the query
    * @type {string}
    */
-  var country_score = "(1 - (country <<-> q_country))";
+  var country_score = "(1 - (country &lt;&lt;-> q_country))";
 
   return [
       { w:1.0, is_bonus: false,  expr: substring_score },
@@ -305,16 +333,38 @@ function get_inner_query_conditions() {
   /**
    * pg_trgm operators:
    *    a  % b: returns true if similarity between 'a' and 'b' is above 0.3 (default);
-   *    a <<-> b : distance between 'a' and some word within 'b';
-   *    a <->> b : distance between 'b' and some word within 'a'
+   *    a &lt;&lt;-> b : distance between 'a' and some word within 'b';
+   *    a &lt;->> b : distance between 'b' and some word within 'a'
    */
 
   return [
     //"name_ascii ILIKE q_name_ilike",
     "name_ascii % q_name",
-    "name_ascii <<-> q_name <= 0.7",
-    "name_ascii <->> q_name <= 0.7",
-    "name_metaphone <<-> q_name_metaphone <= 0.7",
-    "name_metaphone <->> q_name_metaphone <= 0.7"
+    "name_ascii &lt;&lt;-> q_name &lt;= 0.7",
+    "name_ascii &lt;->> q_name &lt;= 0.7",
+    "name_metaphone &lt;&lt;-> q_name_metaphone &lt;= 0.7",
+    "name_metaphone &lt;->> q_name_metaphone &lt;= 0.7"
   ];
-}
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="App.html">App</a></li><li><a href="PlotlyMap.html">PlotlyMap</a></li><li><a href="QueryBox.html">QueryBox</a></li><li><a href="Suggestion.html">Suggestion</a></li><li><a href="Suggestions.html">Suggestions</a></li></ul><h3>Global</h3><ul><li><a href="global.html#fetchSuggestions">fetchSuggestions</a></li><li><a href="global.html#get_inner_query">get_inner_query</a></li><li><a href="global.html#get_inner_query_conditions">get_inner_query_conditions</a></li><li><a href="global.html#get_name_subscores">get_name_subscores</a></li><li><a href="global.html#get_overall_score">get_overall_score</a></li><li><a href="global.html#get_q_columns">get_q_columns</a></li><li><a href="global.html#get_query">get_query</a></li><li><a href="global.html#globalReducer">globalReducer</a></li><li><a href="global.html#isWaiting">isWaiting</a></li><li><a href="global.html#query">query</a></li><li><a href="global.html#queryDetails">queryDetails</a></li><li><a href="global.html#receiveSuggestions">receiveSuggestions</a></li><li><a href="global.html#shouldKeepWaiting">shouldKeepWaiting</a></li><li><a href="global.html#suggestions">suggestions</a></li><li><a href="global.html#suggestionsToMapData">suggestionsToMapData</a></li><li><a href="global.html#unaccent">unaccent</a></li><li><a href="global.html#updateQuery">updateQuery</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.2</a> on Sun Jul 23 2017 22:05:59 GMT-0400 (EDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

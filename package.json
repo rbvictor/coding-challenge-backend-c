@@ -5,7 +5,8 @@
   "scripts": {
     "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build",
     "start": "node ./bin/www",
-    "test": "mocha"
+    "test": "mocha",
+    "build-docs": "jsdoc --readme README.md . -r -c docs/conf.json -d docs"
   },
   "dependencies": {
     "body-parser": "~1.17.1",

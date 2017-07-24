@@ -42,6 +42,114 @@
 
 
 
+    <section>
+        <article><h1>Coding Challenge Back-end - RV</h1><h2>Introduction</h2><p>This application was implemented using PostgreSQL for its database, using 
+Node.js with Express framework for the back-end and React library for the
+front-end. It has been deployed on Heroku on the following address: 
+https://coding-challenge-backend-rv.herokuapp.com/</p>
+<p>Additional docs: https://coding-challenge-backend-rv.herokuapp.com/docs/</p>
+<p>This project can be structured as follows :</p>
+<ul>
+<li><p>Infrastructure preparation</p>
+</li>
+<li><p>Data pre-processing</p>
+</li>
+<li><p>Back-end implementation</p>
+</li>
+<li><p>Front-end implementation</p>
+</li>
+</ul>
+<h2>Infrastructure preparation</h2><p>The app has been deployed in Heroku using the basic account. Additional 
+buildpacks were installed for enabling NGINX as a reverse proxy of the
+application, in order to improve static file serving and connexion
+concurrence handling. Instructions for NGINX configuration were taken from 
+https://www.nodebeats.com/documentation/configuring-nginx-on-heroku . 
+See custom NGINX configuration file 
+<a href="config/nginx.conf.erb">config/nginx.conf.erb</a> .</p>
+<h2>Data pre-processing</h2><p>Knowledge data containing info about cities in Canada and the USA was
+imported into PostgreSQL database, by running the script 
+<a href="data/create_table.sql">data/create_table.sql</a> . </p>
+<p>An additional table was created in order to provide full names of Canadian 
+provinces and US states.</p>
+<p>The final table was resulted from the original and additional data, with 
+new columns being created for names converted into their phonetic 
+representations (metaphone) and also for coordinates converted into 
+PostGIS geometry data type. </p>
+<h3>PostgreSQL extensions</h3><p>The SQL script also installs the following extensions in the database :</p>
+<ul>
+<li><p><a href="https://www.postgresql.org/docs/current/static/pgtrgm.html">pg_trgm</a></p>
+<p>  Library for string comparison using trigram matching and provides
+  index operations using <a href="https://www.postgresql.org/docs/current/static/textsearch-indexes.html">GiST (Generalized Search Tree) and GIN 
+  (Generalized Inverted Index)</a>, 
+  which allows searching strings fast.</p>
+</li>
+<li><p><a href="https://www.postgresql.org/docs/current/static/fuzzystrmatch.html">fuzzystrmatch</a></p>
+<p>  Library that provides, among others, the function metaphone that
+  converts a word into its phonetic representation.</p>
+</li>
+<li><p><a href="http://postgis.net/">postgis</a></p>
+<p>  Library that provides specific operations for dealing with geometrical 
+  / geographical information and searching it using GiST indexes. </p>
+</li>
+<li><p><a href="https://www.postgresql.org/docs/current/static/unaccent.html">unaccent</a></p>
+<p>  Library that provides a function to remove diacritics from a text. (Ex.
+  : unaccent('Québec') --&gt;&gt; 'Quebec' )</p>
+</li>
+</ul>
+<h3>Creating indexes</h3><p>Library pg_trgm supports both GiST and GIN indexing.
+Library PostGIS supports only GiST.</p>
+<h4>GiST (Generalized Search Tree)</h4><p>GiST-based indexes are very appropriate when dealing with 
+<a href="https://wiki.postgresql.org/images/4/46/Knn.pdf">k-nearest neighbors (KNN)</a>
+searching, that is, when one wants the closest points from a given query.
+They are considered to be an improvement of classical B-tree and R-tree 
+based indexes. It is the case for trigram and geometrical comparisons 
+which are measured in distance. </p>
+<p>In this app, this type of index was created for city coordinates and 
+for name columns combined with the coordinate column. </p>
+<h4>GIN  (Generalized Inverted Index)</h4><p>GIN-based indexes are recommended for text search, as it stores an
+index entry for every word with a list of matching locations. </p>
+<p>In this app, this type of index was created for city name columns 
+separately.</p>
+<h2>Back-end implementation</h2><p>This app back-end was implemented using Node.js with Express. The tool
+<code>express-generator</code> was used in order to build the initial scaffold
+of the application, along with the necessary boilerplate code. </p>
+<p>The entry point is located in /api/suggestions and allows for the 
+following search
+cases:</p>
+<p><strong>Name-only</strong></p>
+<pre class="prettyprint source"><code>/api/suggestions?q=Quebec</code></pre><p><strong>Name with coordinate</strong></p>
+<pre class="prettyprint source"><code>/api/suggestions?q=Quebec&latitude=46.8123&longitude=-71.2145  </code></pre><p><strong>Coordinate-only</strong></p>
+<pre class="prettyprint source"><code>/api/suggestions?latitude=46.8123&longitude=-71.2145</code></pre><p><strong>Latitude or longitude-only</strong></p>
+<pre class="prettyprint source"><code>/api/suggestions?latitude=46.8123</code></pre><p>In this case, the API returns cities closed to the corresponding 
+latitudinal or longitudinal line. </p>
+<p>Usage of indexed metaphone-converted names allows querying for misspelled
+city names like this:</p>
+<pre class="prettyprint source"><code>/api/suggestions?q=Kebek</code></pre><p>To override default threshold score, it is possible to use the following
+parameter :</p>
+<pre class="prettyprint source"><code>/api/suggestions?q=Kebek&thr=0</code></pre><h3>Queries to the database</h3><p>Queries to the database were implemented using the <a href="http://knexjs.org/">Knex</a> 
+library, which makes it easier to build SQL queries and submits them 
+to the database using a pool of connections. </p>
+<p>Specific scoring criteria according to textual (both literal and phonetic) 
+and geometrical distances were inserted during query construction. </p>
+<p>See more details on the
+<a href="https://coding-challenge-backend-rv.herokuapp.com/docs/">docs section</a> 
+of the app or on the code comments.</p>
+<h3>Unit tests</h3><p>Libraries <code>chai</code> and <code>mocha</code> were used for unit testing. Initial test
+cases were based on the original GitHub fork of the challenge :
+https://github.com/busbud/coding-challenge-backend-c/blob/master/test/suggestions.js
+. Additional test cases were implemented in order to test new
+functionalities and new scenarios. For running those test cases, 
+run the command from the app root folder:</p>
+<pre class="prettyprint source"><code>npm test</code></pre><h2>Front-end implementation</h2><p>This app front-end was implemented using React library. The tool
+<code>create-react-app</code> was used in order to build the initial scaffold
+of the front-end. Furthermore, the library Redux was used to manage
+the front-end state and the application flux. </p>
+<p>Plotly was used as an additional library wrapped in a React component
+for plotting on a map the points that were returned by the api.  </p>
+<p>View comments on source code for additional details of the components, 
+actions and reducers created for the front-end part of the app.</p></article>
+    </section>
+
 
 
 
@@ -54,7 +162,7 @@
 
 <header>
     
-        <h2>helper/get_query.js</h2>
+        <h2>client/src/actions/index.js</h2>
         
     
 </header>
@@ -63,7 +171,7 @@
     <div class="container-overview">
     
         
-            <div class="description">Helper containing function `get_query(q, latitude, longitude, knex)`</div>
+            <div class="description"><p>Contains the actions whose results are dispatched to the reducer</p></div>
         
 
         
@@ -98,7 +206,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="helper_get_query.js.html">helper/get_query.js</a>, <a href="helper_get_query.js.html#line1">line 1</a>
+        <a href="client_src_actions_index.js.html">client/src/actions/index.js</a>, <a href="client_src_actions_index.js.html#line1">line 1</a>
     </li></ul></dd>
     
 
@@ -145,7 +253,7 @@
 
 <header>
     
-        <h2>helper/unaccent.js</h2>
+        <h2>client/src/components/App.js</h2>
         
     
 </header>
@@ -154,7 +262,7 @@
     <div class="container-overview">
     
         
-            <div class="description">Helper containing function `unaccent(str)`</div>
+            <div class="description"><p>Main front-end component</p></div>
         
 
         
@@ -189,7 +297,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="helper_unaccent.js.html">helper/unaccent.js</a>, <a href="helper_unaccent.js.html#line1">line 1</a>
+        <a href="client_src_components_App.js.html">client/src/components/App.js</a>, <a href="client_src_components_App.js.html#line1">line 1</a>
     </li></ul></dd>
     
 
@@ -236,7 +344,7 @@
 
 <header>
     
-        <h2>routes/api/suggestions.js</h2>
+        <h2>client/src/index.js</h2>
         
     
 </header>
@@ -245,7 +353,7 @@
     <div class="container-overview">
     
         
-            <div class="description">Entry route of API request</div>
+            <div class="description"><p>Front-end entry where all the other React components are called</p></div>
         
 
         
@@ -280,7 +388,371 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="routes_api_suggestions.js.html">routes/api/suggestions.js</a>, <a href="routes_api_suggestions.js.html#line1">line 1</a>
+        <a href="client_src_index.js.html">client/src/index.js</a>, <a href="client_src_index.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>client/src/reducers/index.js</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>Contains reducers that transform a previous state into a new one, after receiving a dispatch from an action</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="client_src_reducers_index.js.html">client/src/reducers/index.js</a>, <a href="client_src_reducers_index.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>src/helper/get_query.js</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>Helper containing function <code>get_query(q, latitude, longitude, knex)</code></p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_helper_get_query.js.html">src/helper/get_query.js</a>, <a href="src_helper_get_query.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>src/helper/utils.js</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>Helper containing function <code>unaccent(str)</code></p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_helper_utils.js.html">src/helper/utils.js</a>, <a href="src_helper_utils.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>src/routes/api/suggestions.js</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>Entry route of API request</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_routes_api_suggestions.js.html">src/routes/api/suggestions.js</a>, <a href="src_routes_api_suggestions.js.html#line1">line 1</a>
     </li></ul></dd>
     
 
@@ -336,8 +808,10 @@
     <div class="container-overview">
     
         
-            <div class="description">Unit tests for Suggestions API.
-Run 'npm test' to execute these tests.</div>
+            <div class="description"><p>Unit tests based on the original challenge github test file :
+https://github.com/busbud/coding-challenge-backend-c/blob/master/test/suggestions.js</p>
+<p>Some initial libraries where changed and new test cases were added.
+Run 'npm test' to execute these tests.</p></div>
         
 
         
@@ -415,13 +889,13 @@ Run 'npm test' to execute these tests.</div>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#get_query">get_query</a></li><li><a href="global.html#unaccent">unaccent</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="App.html">App</a></li><li><a href="PlotlyMap.html">PlotlyMap</a></li><li><a href="QueryBox.html">QueryBox</a></li><li><a href="Suggestion.html">Suggestion</a></li><li><a href="Suggestions.html">Suggestions</a></li></ul><h3>Global</h3><ul><li><a href="global.html#fetchSuggestions">fetchSuggestions</a></li><li><a href="global.html#get_inner_query">get_inner_query</a></li><li><a href="global.html#get_inner_query_conditions">get_inner_query_conditions</a></li><li><a href="global.html#get_name_subscores">get_name_subscores</a></li><li><a href="global.html#get_overall_score">get_overall_score</a></li><li><a href="global.html#get_q_columns">get_q_columns</a></li><li><a href="global.html#get_query">get_query</a></li><li><a href="global.html#globalReducer">globalReducer</a></li><li><a href="global.html#isWaiting">isWaiting</a></li><li><a href="global.html#query">query</a></li><li><a href="global.html#queryDetails">queryDetails</a></li><li><a href="global.html#receiveSuggestions">receiveSuggestions</a></li><li><a href="global.html#shouldKeepWaiting">shouldKeepWaiting</a></li><li><a href="global.html#suggestions">suggestions</a></li><li><a href="global.html#suggestionsToMapData">suggestionsToMapData</a></li><li><a href="global.html#unaccent">unaccent</a></li><li><a href="global.html#updateQuery">updateQuery</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.2</a> on Wed Jul 12 2017 23:23:02 GMT-0400 (EDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.2</a> on Sun Jul 23 2017 22:05:59 GMT-0400 (EDT)
 </footer>
 
 <script> prettyPrint(); </script>

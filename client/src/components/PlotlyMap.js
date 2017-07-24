@@ -7,6 +7,10 @@ Plotly.register(require('plotly.js/lib/scattergeo'));
 import layout from './PlotlyMap.layout.json';
 import './PlotlyMap.css'
 
+/**
+ * @description Converts array of suggestions into data that is compatible with Plotly maps
+ * @param {array} suggestions
+ */
 const suggestionsToMapData = (suggestions) => (
   [{
     type: 'scattergeo',
@@ -31,6 +35,10 @@ const suggestionsToMapData = (suggestions) => (
   }]
 );
 
+
+/**
+ * @description Plotly map wrapped in a React component
+ */
 class PlotlyMap extends Component {
 
   constructor(props, context) {
@@ -55,6 +63,9 @@ class PlotlyMap extends Component {
       </div>);
   }
 
+  /**
+   * In order to make the app more fluid, the map only updates after a period of user's inactivity (set in 500 ms)
+   */
   componentDidUpdate() {
     if (!this.props.isWaiting) {
       _.defer((_this, layout) => {

@@ -1,3 +1,7 @@
+/**
+ * @file Front-end entry where all the other React components are called
+ */
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';

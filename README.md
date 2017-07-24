@@ -1,129 +1,180 @@
-# Busbud Coding Challenge [![Build Status](https://circleci.com/gh/busbud/coding-challenge-backend-c/tree/master.png?circle-token=6e396821f666083bc7af117113bdf3a67523b2fd)](https://circleci.com/gh/busbud/coding-challenge-backend-c)
-
-## Requirements
-
-Design an API endpoint that provides auto-complete suggestions for large cities.
-The suggestions should be restricted to cities in the USA and Canada with a population above 5000 people.
-
-- the endpoint is exposed at `/suggestions`
-- the partial (or complete) search term is passed as a querystring parameter `q`
-- the caller's location can optionally be supplied via querystring parameters `latitude` and `longitude` to help improve relative scores
-- the endpoint returns a JSON response with an array of scored suggested matches
-    - the suggestions are sorted by descending score
-    - each suggestion has a score between 0 and 1 (inclusive) indicating confidence in the suggestion (1 is most confident)
-    - each suggestion has a name which can be used to disambiguate between similarly named locations
-    - each suggestion has a latitude and longitude
-- all functional tests should pass (additional tests may be implemented as necessary).
-- the final application should be [deployed to Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs).
-- feel free to add more features if you like!
-
-#### Sample responses
-
-These responses are meant to provide guidance. The exact values can vary based on the data source and scoring algorithm
-
-**Near match**
-
-    GET /suggestions?q=Londo&latitude=43.70011&longitude=-79.4163
-
-```json
-{
-  "suggestions": [
-    {
-      "name": "London, ON, Canada",
-      "latitude": "42.98339",
-      "longitude": "-81.23304",
-      "score": 0.9
-    },
-    {
-      "name": "London, OH, USA",
-      "latitude": "39.88645",
-      "longitude": "-83.44825",
-      "score": 0.5
-    },
-    {
-      "name": "London, KY, USA",
-      "latitude": "37.12898",
-      "longitude": "-84.08326",
-      "score": 0.5
-    },
-    {
-      "name": "Londontowne, MD, USA",
-      "latitude": "38.93345",
-      "longitude": "-76.54941",
-      "score": 0.3
-    }
-  ]
-}
-```
-
-**No match**
-
-    GET /suggestions?q=SomeRandomCityInTheMiddleOfNowhere
-
-```json
-{
-  "suggestions": []
-}
-```
+# Coding Challenge Back-end - RV
 
 
-### Non-functional
+## Introduction
 
-- All code should be written in Javascript
-- Mitigations to handle high levels of traffic should be implemented
-- Work should be submitted as a pull-request to this repo
-- Documentation and maintainability is a plus
+This application was implemented using PostgreSQL for its database, using 
+Node.js with Express framework for the back-end and React library for the
+front-end. It has been deployed on Heroku on the following address: 
+https://coding-challenge-backend-rv.herokuapp.com/
 
-### References
+Additional docs: https://coding-challenge-backend-rv.herokuapp.com/docs/
 
-- Geonames provides city lists Canada and the USA http://download.geonames.org/export/dump/readme.txt
-- http://www.nodejs.org/
-- http://ejohn.org/blog/node-js-stream-playground/
+This project can be structured as follows :
+
+* Infrastructure preparation
+
+* Data pre-processing
+
+* Back-end implementation
+
+* Front-end implementation
 
 
-## Getting Started
+## Infrastructure preparation
 
-Begin by forking this repo and cloning your fork. GitHub has apps for [Mac](http://mac.github.com/) and
-[Windows](http://windows.github.com/) that make this easier.
+The app has been deployed in Heroku using the basic account. Additional 
+buildpacks were installed for enabling NGINX as a reverse proxy of the
+application, in order to improve static file serving and connexion
+concurrence handling. Instructions for NGINX configuration were taken from 
+https://www.nodebeats.com/documentation/configuring-nginx-on-heroku . 
+See custom NGINX configuration file 
+[config/nginx.conf.erb](config/nginx.conf.erb) .
+ 
 
-### Setting up a Nodejs environment
+## Data pre-processing
 
-Get started by installing [nodejs](http://www.nodejs.org).
+Knowledge data containing info about cities in Canada and the USA was
+imported into PostgreSQL database, by running the script 
+[data/create_table.sql](data/create_table.sql) . 
 
-For OS X users, use [Homebrew](http://brew.sh) and `brew install nvm`
+An additional table was created in order to provide full names of Canadian 
+provinces and US states.
 
-Once that's done, from the project directory, run
+The final table was resulted from the original and additional data, with 
+new columns being created for names converted into their phonetic 
+representations (metaphone) and also for coordinates converted into 
+PostGIS geometry data type. 
 
-```
-nvm use
-```
+### PostgreSQL extensions
 
-### Setting up the project
+The SQL script also installs the following extensions in the database :
 
-In the project directory run
+* [pg_trgm](https://www.postgresql.org/docs/current/static/pgtrgm.html)
 
-```
-npm install
-```
+    Library for string comparison using trigram matching and provides
+    index operations using [GiST (Generalized Search Tree) and GIN 
+    (Generalized Inverted Index)](https://www.postgresql.org/docs/current/static/textsearch-indexes.html), 
+    which allows searching strings fast.
+    
+* [fuzzystrmatch](https://www.postgresql.org/docs/current/static/fuzzystrmatch.html)
 
-### Running the tests
+    Library that provides, among others, the function metaphone that
+    converts a word into its phonetic representation.
 
-The test suite can be run with
+* [postgis](http://postgis.net/)
 
-```
-npm test
-```
+    Library that provides specific operations for dealing with geometrical 
+    / geographical information and searching it using GiST indexes. 
 
-### Starting the application
+* [unaccent](https://www.postgresql.org/docs/current/static/unaccent.html)
 
-To start a local server run
+    Library that provides a function to remove diacritics from a text. (Ex.
+    : unaccent('Québec') -->> 'Quebec' )
+    
+    
+### Creating indexes
+ 
+Library pg_trgm supports both GiST and GIN indexing.
+Library PostGIS supports only GiST.
+ 
+ 
+#### GiST (Generalized Search Tree)
+ 
+GiST-based indexes are very appropriate when dealing with 
+[k-nearest neighbors (KNN)](https://wiki.postgresql.org/images/4/46/Knn.pdf)
+searching, that is, when one wants the closest points from a given query.
+They are considered to be an improvement of classical B-tree and R-tree 
+based indexes. It is the case for trigram and geometrical comparisons 
+which are measured in distance. 
 
-```
-PORT=3456 npm start
-```
+In this app, this type of index was created for city coordinates and 
+for name columns combined with the coordinate column. 
 
-which should produce output similar to
+#### GIN  (Generalized Inverted Index)
 
-```
-Server running at http://127.0.0.1:2345/suggestions
-```
+GIN-based indexes are recommended for text search, as it stores an
+index entry for every word with a list of matching locations. 
+
+In this app, this type of index was created for city name columns 
+separately.
+
+
+## Back-end implementation
+
+This app back-end was implemented using Node.js with Express. The tool
+``express-generator`` was used in order to build the initial scaffold
+of the application, along with the necessary boilerplate code. 
+
+The entry point is located in /api/suggestions and allows for the 
+following search
+cases:
+ 
+**Name-only**
+ 
+    /api/suggestions?q=Quebec
+    
+**Name with coordinate**
+
+    /api/suggestions?q=Quebec&latitude=46.8123&longitude=-71.2145  
+    
+**Coordinate-only**
+
+    /api/suggestions?latitude=46.8123&longitude=-71.2145
+       
+**Latitude or longitude-only**
+
+    /api/suggestions?latitude=46.8123
+    
+In this case, the API returns cities closed to the corresponding 
+latitudinal or longitudinal line. 
+
+Usage of indexed metaphone-converted names allows querying for misspelled
+city names like this:
+ 
+    /api/suggestions?q=Kebek
+    
+To override default threshold score, it is possible to use the following
+parameter :
+
+    /api/suggestions?q=Kebek&thr=0
+    
+
+### Queries to the database
+
+Queries to the database were implemented using the [Knex](http://knexjs.org/) 
+library, which makes it easier to build SQL queries and submits them 
+to the database using a pool of connections. 
+
+Specific scoring criteria according to textual (both literal and phonetic) 
+and geometrical distances were inserted during query construction. 
+
+See more details on the
+[docs section](https://coding-challenge-backend-rv.herokuapp.com/docs/) 
+of the app or on the code comments.
+
+
+### Unit tests
+
+Libraries `chai` and `mocha` were used for unit testing. Initial test
+cases were based on the original GitHub fork of the challenge :
+https://github.com/busbud/coding-challenge-backend-c/blob/master/test/suggestions.js
+. Additional test cases were implemented in order to test new
+functionalities and new scenarios. For running those test cases, 
+run the command from the app root folder:
+
+    npm test
+
+
+## Front-end implementation
+
+This app front-end was implemented using React library. The tool
+``create-react-app`` was used in order to build the initial scaffold
+of the front-end. Furthermore, the library Redux was used to manage
+the front-end state and the application flux. 
+
+Plotly was used as an additional library wrapped in a React component
+for plotting on a map the points that were returned by the api.  
+
+View comments on source code for additional details of the components, 
+actions and reducers created for the front-end part of the app.

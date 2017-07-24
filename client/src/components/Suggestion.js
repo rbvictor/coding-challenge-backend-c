@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+/**
+ * @description Renders each individual suggestion as a card-like div
+ */
 class Suggestion extends Component {
   render() {
     return (

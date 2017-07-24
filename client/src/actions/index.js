@@ -1,15 +1,27 @@
+/**
+ * @file Contains the actions whose results are dispatched to the reducer
+ */
+
 import 'whatwg-fetch';
 
 export const UPDATE_QUERY = 'UPDATE_QUERY';
 export const RECEIVE_SUGGESTIONS = 'RECEIVE_SUGGESTIONS';
 export const TOGGLE_WAITING = 'TOGGLE_WAITING';
 
+/**
+ * Dispatches new query to reducer
+ * @param {string} query
+ */
 const updateQuery = (query) => (
   {
     type: UPDATE_QUERY,
     query
   });
 
+/**
+ * Dispatches suggestions to reducer
+ * @param {object} json
+ */
 const receiveSuggestions = (json) => (
   {
     type: RECEIVE_SUGGESTIONS,
@@ -23,6 +35,12 @@ const toggleWaiting = (isWaiting) => (
   }
 );
 
+/**
+ * Dispatches a waiting state 'true' for the map, if there has been changes within the past 500 ms,
+ * or 'false', otherwise.
+ * @param {object} json
+ * @returns {function(*, *)}
+ */
 const shouldKeepWaiting = (json) => {
   return (dispatch, getState) => {
     dispatch(toggleWaiting(getState().suggestions !== json.suggestions));
@@ -31,6 +49,14 @@ const shouldKeepWaiting = (json) => {
 
 const homeUrl = 'api/suggestions?';
 
+/**
+ * @description Structures query string into params: q, latitude and longitude.
+ * Sends the request to the API, receives its response and dispatches it to the reducer.
+ * Dispatches waiting states to visualization map.
+ *
+ * @param {string} query
+ * @returns {function(*=, *)}
+ */
 export const fetchSuggestions = (query) => {
   return (dispatch, getState) => {
 

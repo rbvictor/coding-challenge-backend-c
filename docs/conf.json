@@ -1,5 +1,6 @@
 {
   "source": {
-    "exclude": ["node_modules", "client"]
-  }
+    "exclude": ["node_modules", "client/node_modules"]
+  },
+  "plugins":  ["plugins/markdown"]
 }

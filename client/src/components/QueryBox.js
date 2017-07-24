@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './QueryBox.css';
 
+/**
+ * @description Renders query text box and triggers automatic update as user types in
+ */
 class QueryBox extends Component {
 
   constructor(props, context) {

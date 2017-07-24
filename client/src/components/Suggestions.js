@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import Suggestion from './Suggestion';
 import './Suggestions.css'
 
+/**
+ * @description Renders a collection of suggestions coming from the API
+ */
 class Suggestions extends Component {
   render() {
     return (

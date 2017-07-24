@@ -1,5 +1,8 @@
 /**
- * @file Unit tests for Suggestions API.
+ * @file Unit tests based on the original challenge github test file :
+ * https://github.com/busbud/coding-challenge-backend-c/blob/master/test/suggestions.js
+ *
+ * Some initial libraries where changed and new test cases were added.
  * Run 'npm test' to execute these tests.
  */
 

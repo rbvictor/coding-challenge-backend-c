@@ -1,3 +1,7 @@
+/**
+ * @file Main front-end component
+ */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
@@ -6,6 +10,9 @@ import QueryBox from "./QueryBox";
 import Suggestions from "./Suggestions";
 import PlotlyMap from "./PlotlyMap";
 
+/**
+ * @description contains the query text box, as well as suggestions listings and the visualization map
+ */
 class App extends Component {
 
   constructor(props, context) {
