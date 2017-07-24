@@ -123,8 +123,8 @@
       <file leaf-file-name="nginx.conf.erb" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/config/nginx.conf.erb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="273">
-              <caret line="120" column="17" lean-forward="true" selection-start-line="120" selection-start-column="17" selection-end-line="120" selection-end-column="17" />
+            <state relative-caret-position="396">
+              <caret line="133" column="48" lean-forward="true" selection-start-line="133" selection-start-column="48" selection-end-line="133" selection-end-column="48" />
               <folding />
             </state>
           </provider>
@@ -326,41 +326,6 @@
             <path>
               <item name="coding-challenge-backend-rv" type="b2602c69:ProjectViewProjectNode" />
               <item name="coding-challenge-backend-rv" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="coding-challenge-backend-rv" type="b2602c69:ProjectViewProjectNode" />
-              <item name="coding-challenge-backend-rv" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="coding-challenge-backend-rv" type="b2602c69:ProjectViewProjectNode" />
-              <item name="coding-challenge-backend-rv" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="coding-challenge-backend-rv" type="b2602c69:ProjectViewProjectNode" />
-              <item name="coding-challenge-backend-rv" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="helper" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="coding-challenge-backend-rv" type="b2602c69:ProjectViewProjectNode" />
-              <item name="coding-challenge-backend-rv" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="routes" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="coding-challenge-backend-rv" type="b2602c69:ProjectViewProjectNode" />
-              <item name="coding-challenge-backend-rv" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="routes" type="462c0819:PsiDirectoryNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="coding-challenge-backend-rv" type="b2602c69:ProjectViewProjectNode" />
-              <item name="coding-challenge-backend-rv" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="coding-challenge-backend-rv" type="b2602c69:ProjectViewProjectNode" />
@@ -567,7 +532,7 @@
       <workItem from="1500510037158" duration="15314000" />
       <workItem from="1500593950874" duration="11161000" />
       <workItem from="1500685395887" duration="9288000" />
-      <workItem from="1500818982760" duration="34842000" />
+      <workItem from="1500818982760" duration="35312000" />
     </task>
     <servers />
   </component>
@@ -604,7 +569,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="199764000" />
+    <option name="totallyTimeSpent" value="200234000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1041,8 +1006,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/config/nginx.conf.erb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="273">
-          <caret line="120" column="17" lean-forward="true" selection-start-line="120" selection-start-column="17" selection-end-line="120" selection-end-column="17" />
+        <state relative-caret-position="396">
+          <caret line="133" column="48" lean-forward="true" selection-start-line="133" selection-start-column="48" selection-end-line="133" selection-end-column="48" />
           <folding />
         </state>
       </provider>
