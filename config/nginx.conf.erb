@@ -126,6 +126,11 @@ http {
             try_files $uri $uri/ =404;
         }
 
+        location = /docs {
+            root /app;
+            try_files $uri/ =404;
+        }
+
         location /docs/ {
             root /app;
             try_files $uri $uri/ =404;
