@@ -120,17 +120,17 @@ http {
 		listen  <%= ENV['PORT'] %>;
 		server_name  _;
 
-        location /docs/ {
+        location ~ /docs {
             root /app/;
             try_files $uri /index.html;
         }
 
-        location / {
+        location ~ / {
             root /app/client/build/;
             try_files $uri /index.html;
         }
 
-        location /sw.js {
+        location ~ /sw.js {
             add_header Cache-Control "no-cache";
             proxy_cache_bypass $http_pragma;
             proxy_cache_revalidate on;
@@ -138,7 +138,7 @@ http {
             access_log off;
         }
 
-		location /api/ {
+		location ~ /api {
             proxy_pass http://heroku;
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
