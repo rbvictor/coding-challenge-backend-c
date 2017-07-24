@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="51ce5528-05b1-49bf-b204-a2a0ac600276" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/nginx.conf.erb" afterPath="$PROJECT_DIR$/config/nginx.conf.erb" />
-    </list>
+    <list default="true" id="51ce5528-05b1-49bf-b204-a2a0ac600276" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
     <ignored path="$PROJECT_DIR$/tmp/" />
@@ -123,8 +121,8 @@
       <file leaf-file-name="nginx.conf.erb" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/config/nginx.conf.erb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="422">
-              <caret line="135" column="30" lean-forward="false" selection-start-line="135" selection-start-column="30" selection-end-line="135" selection-end-column="30" />
+            <state relative-caret-position="440">
+              <caret line="136" column="32" lean-forward="true" selection-start-line="136" selection-start-column="32" selection-end-line="136" selection-end-column="32" />
               <folding />
             </state>
           </provider>
@@ -532,7 +530,7 @@
       <workItem from="1500510037158" duration="15314000" />
       <workItem from="1500593950874" duration="11161000" />
       <workItem from="1500685395887" duration="9288000" />
-      <workItem from="1500818982760" duration="36348000" />
+      <workItem from="1500818982760" duration="36484000" />
     </task>
     <servers />
   </component>
@@ -569,7 +567,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="201270000" />
+    <option name="totallyTimeSpent" value="201406000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1006,8 +1004,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/config/nginx.conf.erb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="422">
-          <caret line="135" column="30" lean-forward="false" selection-start-line="135" selection-start-column="30" selection-end-line="135" selection-end-column="30" />
+        <state relative-caret-position="440">
+          <caret line="136" column="32" lean-forward="true" selection-start-line="136" selection-start-column="32" selection-end-line="136" selection-end-column="32" />
           <folding />
         </state>
       </provider>
