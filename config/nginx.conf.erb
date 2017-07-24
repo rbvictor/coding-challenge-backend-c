@@ -120,16 +120,22 @@ http {
 		listen  <%= ENV['PORT'] %>;
 		server_name  _;
 
-		root	"/app/";
-
         location / {
-            alias	"/client/build";
-            try_files $uri /index.html;
+            alias	"/app/client/build";
+            add_header Cache-Control "no-cache";
+            proxy_cache_bypass $http_pragma;
+            proxy_cache_revalidate on;
+            expires off;
+            access_log off;
         }
 
         location /docs {
-            alias	"/docs";
-            try_files $uri /index.html;
+            alias	"/app/docs";
+            add_header Cache-Control "no-cache";
+            proxy_cache_bypass $http_pragma;
+            proxy_cache_revalidate on;
+            expires off;
+            access_log off;
         }
 
         location /sw.js {
