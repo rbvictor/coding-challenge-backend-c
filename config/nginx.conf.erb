@@ -123,12 +123,12 @@ http {
 		root	"/app/";
 
         location / {
-            alias	"/app/client/build";
+            alias	"/client/build";
             try_files $uri /index.html;
         }
 
         location /docs {
-            alias	"/app/docs";
+            alias	"/docs";
             try_files $uri /index.html;
         }
 
